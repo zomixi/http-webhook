@@ -6,38 +6,52 @@ var app = express();
 app.use(express.json()); // for parsing application/json
 app.use(express.urlencoded({ extended: true })); // for parsing application/x-www-form-urlencoded
 
-const data = [];
+const store = [];
 
 app.get("/", function (req, res) {
-  const rows = data
+  const rows = store
     .map(
-      (row) => `
+      (row, index) => `
       <tr>
-          <td>${JSON.stringify(row.headers)}</td>
-          <td>${JSON.stringify(row.body)}</td>
+        <td align="center">${index + 1}</td>
+        <td>${JSON.stringify(row.headers)}</td>
+        <td>${JSON.stringify(row.body)}</td>
       </tr>`
     )
-    .join("\n");
+    .join("");
 
-  res.send(`<html>
+  res.send(`
+  <html>
     <head>
-        <title>Webhook</title>
+      <meta charset="UTF-8">
+      <meta http-equiv="X-UA-Compatible" content="IE=edge">
+      <meta name="viewport" content="width=device-width, initial-scale=1.0">
+      <title>Document</title>
+      <style>
+          td {
+            word-break: break-all;
+            padding: 8px;
+          }
+      </style>
     </head>
     <body>
-        <table border="1" style="width: 100%">
-            <tr>
-                <th>headers</th>
-                <th>body</th>
-            </tr>
-            ${rows}
+        <table border="1">
+          <thead>
+              <tr>
+                <th style="width: 2%;">index</th>
+                <th style="width: 44%;">headers</th>
+                <th style="width: 44%;">body</th>
+              </tr>
+          </thead>
+          ${rows}
         </table>
     </body>
-</html>`);
+  </html>`);
 });
 
 app.post("/", function (req, res) {
   const { headers, body } = req;
-  data.push({
+  store.push({
     headers,
     body,
   });
